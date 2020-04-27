@@ -8,7 +8,12 @@ import argparse
 import itertools
 import random
 import signal
+import logging
 
+log = logging.getLogger("verbose")
+handler = logging.StreamHandler()
+handler.setLevel(logging.DEBUG)
+log.addHandler(handler)
 ERASE_LINE = '\x1b[2K'
 
 def hour_min_second(seconds):
@@ -28,6 +33,7 @@ class DCCcat(irc.client.SimpleIRCClient):
 
 
     def on_ctcp(self, connection, event):
+        log.debug("CTCP: %s" % event.arguments)
         if event.arguments[0] != "DCC":
             return
 
@@ -62,7 +68,12 @@ class DCCcat(irc.client.SimpleIRCClient):
         data = event.arguments[0]
         self.file.write(data.decode('utf-8') if self.args.stdout else data)
         self.received_bytes = self.received_bytes + len(data)
-        self.dcc.send_bytes(struct.pack("!I", self.received_bytes))
+
+        # TODO: This can cause a bug !
+        # I don't known why the bot that i have used to do the tests only reliably send the files
+        # if i send the total number of bytes received after the file has been totally transferred.
+        if self.received_bytes == self.total_size:
+            self.dcc.send_bytes(struct.pack("!I", self.received_bytes))
 
         if not self.args.stdout:
             self.show_download_status()
@@ -75,22 +86,20 @@ class DCCcat(irc.client.SimpleIRCClient):
         self.connection.quit()
 
     def on_welcome(self, connection, event):
-        if self.args.verbose:
-            print("Welcome page of the server was reached successfully.")
-            print("Sending command to the bot...")
+        log.debug("Welcome page of the server was reached successfully.")
+        log.debug("Sending command to the bot...")
 
         if self.args.action == "list":
             self.connection.privmsg(self.args.bot,"xdcc send list")
         elif self.args.action == "send":
-            self.connection.privmsg(self.args.bot,"xdcc send %s" % self.args.pack)
+            self.connection.privmsg(self.args.bot,"xdcc send %d" % self.args.pack)
 
     def on_nicknameinuse(self, c, e):
         print("Failed! Nickname '%s' already in use" % self.args.nickname)
         self.connection.quit()
 
     def on_privnotice(self, c, e):
-        if self.args.verbose:
-            print("PRIVNOTICE: %s" % e.arguments[0])
+        log.debug("PRIVNOTICE: %s" % e.arguments[0])
 
         source = str(e.source)
         if source.startswith(self.args.bot):
@@ -117,7 +126,7 @@ parser.add_argument("--nickname",'-n',type=str,
 parser.add_argument("--verbose",'-v',action='store_true',help="enable verbose mode")
 parser.add_argument("bot",type=str,help="bot name")
 parser.add_argument("action",choices=["list",'send'],help="action to take")
-parser.add_argument("pack",nargs='?',type=str,help="pack number of file")
+parser.add_argument("pack",nargs='?',type=int,help="pack number of file")
 args = parser.parse_args()
 
 if args.action == "list" and args.pack :
@@ -127,8 +136,11 @@ elif args.action == "send" and args.pack == None:
 elif args.stdout  and args.action != "list":
     parser.error("--stdout can only be used with the 'list' action")
 
+
 if args.verbose:
-    print("NickName: %s" % args.nickname)
+    log.setLevel(logging.DEBUG)
+
+log.debug("Using nickname %s" % args.nickname)
 
 c = DCCcat(args)
 def cute_exit(sig, frame):
