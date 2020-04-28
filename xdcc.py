@@ -65,34 +65,55 @@ class DCCcat(irc.client.SimpleIRCClient):
             self.last_received_bytes = self.received_bytes
 
     def on_dccmsg(self, connection, event):
+        # Apparently the bots that i have used to test are both using the TURBO DCC instead
+        # of the standard DCC.
         data = event.arguments[0]
         self.file.write(data.decode('utf-8') if self.args.stdout else data)
         self.received_bytes = self.received_bytes + len(data)
 
-        # TODO: This can cause a bug !
-        # I don't known why the bot that i have used to do the tests only reliably send the files
-        # if i send the total number of bytes received after the file has been totally transferred.
+        # Since we are assuming a TURBO DCC transference, let close the connection when
+        # the file has been completely transmitted.
         if self.received_bytes == self.total_size:
-            self.dcc.send_bytes(struct.pack("!I", self.received_bytes))
+            self.dcc.disconnect()
 
         if not self.args.stdout:
             self.show_download_status()
 
     def on_dcc_disconnect(self, connection, event):
+        log.debug("DCC connection closed by remote peer!")
         if not self.args.stdout:
             self.file.close()
             print("")
-
         self.connection.quit()
 
-    def on_welcome(self, connection, event):
-        log.debug("Welcome page of the server was reached successfully.")
+    def request_file_to_bot(self):
         log.debug("Sending command to the bot...")
-
         if self.args.action == "list":
-            self.connection.privmsg(self.args.bot,"xdcc send list")
+            self.connection.ctcp("xdcc",self.args.bot,"send list")
         elif self.args.action == "send":
-            self.connection.privmsg(self.args.bot,"xdcc send %d" % self.args.pack)
+            self.connection.ctcp("xdcc",self.args.bot,"send %d" % self.args.pack)
+
+    def on_welcome(self, c, e):
+        log.debug("Welcome page of the server was reached successfully.")
+        if self.args.channel:
+            self.requested = False
+            self.connection.join(self.args.channel)
+        else:
+            self.request_file_to_bot()
+
+    def on_join(self, c, e):
+        # Some channels can trigger this function multiple times
+
+        log.debug("Joined to channel %s." % self.args.channel)
+        if not self.requested:
+            self.request_file_to_bot()
+            self.requested = True
+
+    def on_kick(self, c, e):
+        print("You was kicked from the channel!")
+
+    def on_part(self, c, e):
+        print("You has parted from the channel!")
 
     def on_nicknameinuse(self, c, e):
         print("Failed! Nickname '%s' already in use" % self.args.nickname)
@@ -103,11 +124,10 @@ class DCCcat(irc.client.SimpleIRCClient):
 
         source = str(e.source)
         if source.startswith(self.args.bot):
-            print("A error occurred!")
             print("-%s- %s" % (source, e.arguments[0]))
-            self.connection.quit()
 
     def on_disconnect(self, connection, event):
+        log.debug("Disconnected!")
         sys.exit(0)
 
 def random_nickname():
@@ -117,6 +137,7 @@ def random_nickname():
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--server","-s",type=str,help="server",default="irc.rizon.net")
+parser.add_argument("--channel","-c",type=str,help="channel")
 parser.add_argument("--port","-p",type=int,help="port number",default=6667)
 parser.add_argument("--stdout","-t",action='store_true',
                     help="when used with the 'list' action, print the file to the stdout")
