@@ -2,7 +2,7 @@
 """A command line tool for downloading files from XDCC bots.
 
 General Usage:
-$ xdcc -s <server-name> -p <port-number> -c <channel>  botname [action] [pack-number]
+$ xdcc -s <server-name> -p <port-number> -c <channel>  botname [action] [packs]
 
 For details on the available options use:
 $ xdcc --help
@@ -12,8 +12,8 @@ Below are some examples using the default server and port number:
 Print the list of available files to stdout:
 $ xdcc --stdout 'YOUR-BOT-NAME-HERE' list
 
-Download the file given by the pack number 500:
-$ xdcc 'YOUR-BOT-NAME-HERE' send 500
+Download the files given by the pack numbers 500,501,502,503 and 510:
+$ xdcc 'YOUR-BOT-NAME-HERE' send '500-503,510'
 
 Same as above, but supposing that the bot requires you to be logged in a specific channel:
 $ xdcc -c '#ChannelNameHere' 'YOUR-BOT-NAME-HERE' send 500
@@ -64,6 +64,27 @@ def hour_min_second(seconds):
     return "%02d:%02d:%02d" % (hours, minutes, seconds)
 
 
+def genpacks(packstr):
+    """It is a generator that returns it pack number describe by some string on
+    the format like '50-62,13,14,70-80'.
+    
+    Args:
+        packstr(str): A string describing the range of packs
+    Yields:
+        int: The numeric pack of the next file to be downloaded.
+    """
+    l = packstr.split(',')
+    for p in l:
+        r = list(map(int,p.split('-')))
+        try:
+            s,e = r
+        except ValueError:
+            s = r[0]
+            e = r[0]
+        # raise error here
+        for k in range(s,e+1):
+            yield k
+
 class XDCC(irc.client.SimpleIRCClient):
     """This class implements a simple IRC client that connect to the specified server
     and channel(if any) to finally ask for a XDCC bot to send the requested file
@@ -76,8 +97,9 @@ class XDCC(irc.client.SimpleIRCClient):
     def __init__(self, args):
         super().__init__()
         self.args = args
-        self.received_bytes = 0
+        self.packs_iter = genpacks(self.args.packs)
 
+        self.received_bytes = 0
         self.total_size = 0
         self.last_received_bytes = 0
         self.last_print_time = 0
@@ -108,9 +130,15 @@ class XDCC(irc.client.SimpleIRCClient):
         self.file = sys.stdout if self.args.stdout else open(self.filename, "wb")
 
         self.total_size = int(size)
+
+        # Reset some important information
+        self.received_bytes = 0
+        self.last_received_bytes = 0
+        self.last_print_time = 0
+
         peer_address = irc.client.ip_numstr_to_quad(peer_address)
         peer_port = int(peer_port)
-        self.dcc = self.dcc_connect(peer_address, peer_port, "raw")
+        self.current_dcc_connection = self.dcc_connect(peer_address, peer_port, "raw")
 
     def show_download_status(self):
         """Show the download status interactively on the screen. Information such as
@@ -145,7 +173,7 @@ class XDCC(irc.client.SimpleIRCClient):
         # Since we are assuming a TURBO DCC transference, let close the connection when
         # the file has been completely transmitted.
         if self.received_bytes == self.total_size:
-            self.dcc.disconnect()
+            self.current_dcc_connection.disconnect()
 
         if not self.args.stdout:
             self.show_download_status()
@@ -156,16 +184,27 @@ class XDCC(irc.client.SimpleIRCClient):
         if not self.args.stdout:
             self.file.close()
             print("")
-        self.connection.quit()
+
+        if self.args.action == "send":
+            try:
+                self.request_file_to_bot()
+            except StopIteration:
+                self.connection.quit()
+        else:                   # list
+           self.connection.quit()
 
     def request_file_to_bot(self):
-        """Sends a ctcp message to the bot requesting the pack number specified on the
-        command-line arguments."""
+        """Sends a ctcp message to the bot requesting the pack number specified 
+        on the command-line arguments.
+        
+        When the send action was chosen, this method raise StopIteration when there is 
+        no more pack to be downloaded.
+        """
         LOG.debug("Sending command to the bot...")
         if self.args.action == "list":
             self.connection.ctcp("xdcc", self.args.bot, "send list")
         elif self.args.action == "send":
-            self.connection.ctcp("xdcc", self.args.bot, "send %d" % self.args.pack)
+            self.connection.ctcp("xdcc", self.args.bot, "send %d" % next(self.packs_iter))
 
     def on_welcome(self, c, e):
         """This is called when we are welcomed by the IRC server."""
@@ -260,13 +299,13 @@ def main():
         "Use 'send' to get a file from the bot.",
     )
     parser.add_argument(
-        "pack", nargs="?", type=int, help="Pack number of the desired file."
+        "packs", nargs="?", type=str, help="Packs numbers of the desired files. Ex: '50-62,64,66,70-80'."
     )
     args = parser.parse_args()
 
-    if args.action == "list" and args.pack:
+    if args.action == "list" and args.packs:
         parser.error("action 'list' don't require a pack number.")
-    elif args.action == "send" and args.pack is None:
+    elif args.action == "send" and args.packs is None:
         parser.error("action 'send' require a pack number.")
     elif args.stdout and args.action != "list":
         parser.error("--stdout can only be used with the 'list' action")
