@@ -67,23 +67,24 @@ def hour_min_second(seconds):
 def genpacks(packstr):
     """It is a generator that returns it pack number describe by some string on
     the format like '50-62,13,14,70-80'.
-    
+
     Args:
         packstr(str): A string describing the range of packs
     Yields:
         int: The numeric pack of the next file to be downloaded.
     """
-    l = packstr.split(',')
+    l = packstr.split(",")
     for p in l:
-        r = list(map(int,p.split('-')))
+        r = list(map(int, p.split("-")))
         try:
-            s,e = r
+            s, e = r
         except ValueError:
             s = r[0]
             e = r[0]
         # raise error here
-        for k in range(s,e+1):
+        for k in range(s, e + 1):
             yield k
+
 
 class XDCC(irc.client.SimpleIRCClient):
     """This class implements a simple IRC client that connect to the specified server
@@ -190,21 +191,23 @@ class XDCC(irc.client.SimpleIRCClient):
                 self.request_file_to_bot()
             except StopIteration:
                 self.connection.quit()
-        else:                   # list
-           self.connection.quit()
+        else:  # list
+            self.connection.quit()
 
     def request_file_to_bot(self):
-        """Sends a ctcp message to the bot requesting the pack number specified 
+        """Sends a ctcp message to the bot requesting the pack number specified
         on the command-line arguments.
-        
-        When the send action was chosen, this method raise StopIteration when there is 
+
+        When the send action was chosen, this method raise StopIteration when there is
         no more pack to be downloaded.
         """
         LOG.debug("Sending command to the bot...")
         if self.args.action == "list":
             self.connection.ctcp("xdcc", self.args.bot, "send list")
         elif self.args.action == "send":
-            self.connection.ctcp("xdcc", self.args.bot, "send %d" % next(self.packs_iter))
+            self.connection.ctcp(
+                "xdcc", self.args.bot, "send %d" % next(self.packs_iter)
+            )
 
     def on_welcome(self, c, e):
         """This is called when we are welcomed by the IRC server."""
@@ -284,7 +287,7 @@ def main():
         "--nickname",
         "-n",
         type=str,
-        help="Nickname to be used in the server. If this option is not provided,"\
+        help="Nickname to be used in the server. If this option is not provided,"
         " a random permutation of 'anonymous' will be used.",
         default=random_nickname(),
     )
@@ -295,11 +298,14 @@ def main():
     parser.add_argument(
         "action",
         choices=["list", "send"],
-        help="Action to take. Use 'list' for get the file list from the bot. "\
+        help="Action to take. Use 'list' for get the file list from the bot. "
         "Use 'send' to get a file from the bot.",
     )
     parser.add_argument(
-        "packs", nargs="?", type=str, help="Packs numbers of the desired files. Ex: '50-62,64,66,70-80'."
+        "packs",
+        nargs="?",
+        type=str,
+        help="Packs numbers of the desired files. Ex: '50-62,64,66,70-80'.",
     )
     args = parser.parse_args()
 
