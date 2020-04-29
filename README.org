@@ -16,23 +16,24 @@
 If *server* and *port number* options are not specified, the default server and port are irc.rizon.net
 and 6667, respectively. If no channel is specified then the program don't join any channel at all.
   
-Some examples:
-#+CAPTION: Print the bot's file list to stdout
+** Some examples
+   
+Print the bot's file list to stdout:
 #+BEGIN_SRC bash
 xdcc --stdout 'YOUR-BOT-NAME-HERE' list
 #+END_SRC
 
-#+CAPTION: Download the files given by the pack numbers 500,501,502,503 and 510:
+Download the files given by the pack numbers 500,501,502,503 and 510:
 #+BEGIN_SRC bash
 xdcc 'YOUR-BOT-NAME-HERE' send '500-503,510'
 #+END_SRC
 
-#+CAPTION: Same as above, but supposing that the bot requires you to be logged in a specific channel:
+Same as above, but supposing that the bot requires you to be logged in a specific channel:
 #+BEGIN_SRC bash
 xdcc -c '#ChannelNameHere' 'YOUR-BOT-NAME-HERE' send '500-503,510'
 #+END_SRC
 
-For more options just type =xdcc --help= in your shell.
+For more options just type =xdcc --help= in your shell:
 #+BEGIN_SRC text
 usage: xdcc [-h] [--server SERVER] [--channel CHANNEL] [--port PORT] [--stdout] [--nickname NICKNAME] [--verbose]
             bot {list,send} [packs]
@@ -56,4 +57,4 @@ optional arguments:
   --verbose, -v         Enable verbose mode.
 #+END_SRC
 * License  
-#+INCLUDE: "LICENSE" src text
+[[file:LICENSE]]
