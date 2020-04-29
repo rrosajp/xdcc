@@ -16,7 +16,7 @@ Download the files given by the pack numbers 500,501,502,503 and 510:
 $ xdcc 'YOUR-BOT-NAME-HERE' send '500-503,510'
 
 Same as above, but supposing that the bot requires you to be logged in a specific channel:
-$ xdcc -c '#ChannelNameHere' 'YOUR-BOT-NAME-HERE' send 500
+$ xdcc -c '#ChannelNameHere' 'YOUR-BOT-NAME-HERE' send '500-503,510'
 
 """
 import sys
