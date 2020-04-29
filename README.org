@@ -1,7 +1,7 @@
 #+TITLE: A simple XDCC downloader written in python3.
 
 * Description
-  *xdcc* is a simple, one file, *xdcc* downloader written in python, so it should works out of the box on every system that
+  *xdcc* is a simple, one file, *XDCC* downloader written in python, so it should works out of the box on every system that
   has python3 installed.
 * How it works
   This program uses a small IRC client library, [[https:github.com/jaraco/irc]], to connect to the specified server, join the
