@@ -1,20 +1,20 @@
 
 # Table of Contents
 
-1.  [Description](#org371b7e6)
-2.  [Install](#orgb82518e)
-3.  [How it works](#orge935356)
-4.  [How to use](#orgbfdb12a)
-    1.  [Some examples](#orgf05f7ad)
-5.  [Notes](#orgf651048)
-6.  [License](#org4b5fdc7)
+1.  [Description](#orgdc27ac4)
+2.  [Install](#org683968f)
+3.  [How it works](#orgd9ae1a5)
+4.  [How to use](#org770036e)
+    1.  [Some examples](#org7dda68f)
+5.  [Notes](#org3d2eb2c)
+6.  [License](#org769eaff)
 
 [![img](https://img.shields.io/badge/Code%20Style-Black-black.svg)](https://github.com/psf/black)
 [![img](https://img.shields.io/badge/Linter-pylint-green.svg)](https://www.pylint.org/)
-[https://img.shields.io/pypi/v/xdcc](https://pypi.org/project/xdcc/)
+[![img](https://img.shields.io/pypi/v/xdcc.svg)](https://pypi.org/project/xdcc/)
 
 
-<a id="org371b7e6"></a>
+<a id="orgdc27ac4"></a>
 
 # Description
 
@@ -22,7 +22,7 @@
 has python3 installed.
 
 
-<a id="orgb82518e"></a>
+<a id="org683968f"></a>
 
 # Install
 
@@ -37,7 +37,7 @@ for a system install or
 to install in the user's **HOME** directory.
 
 
-<a id="orge935356"></a>
+<a id="orgd9ae1a5"></a>
 
 # How it works
 
@@ -46,7 +46,7 @@ chosen channel(if some channel are specified on command-line) and sends a **ctcp
 the desired file. If the last part goes well then we start to receive the file via **DCC**.
 
 
-<a id="orgbfdb12a"></a>
+<a id="org770036e"></a>
 
 # How to use
 
@@ -56,7 +56,7 @@ If **server** and **port number** options are not specified, the default server 
 and 6670, respectively. If no channel is specified then the program don't join any channel at all.
 
 
-<a id="orgf05f7ad"></a>
+<a id="org7dda68f"></a>
 
 ## Some examples
 
@@ -96,7 +96,7 @@ For more options just type `xdcc --help` in your shell:
       --verbose, -v         Enable verbose mode.
 
 
-<a id="orgf651048"></a>
+<a id="org3d2eb2c"></a>
 
 # Notes
 
@@ -107,7 +107,7 @@ i have used for testing. If you come across some bot that handles DCC differentl
 or a pull request. 
 
 
-<a id="org4b5fdc7"></a>
+<a id="org769eaff"></a>
 
 # License
 
