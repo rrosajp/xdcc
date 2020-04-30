@@ -13,6 +13,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/thiagotps/xdcc",
     packages=setuptools.find_packages(),
+    install_requires = ['irc'],
     keywords="irc xdcc",
     entry_points={"console_scripts": ["xdcc=xdcc.__main__:main"]},
     classifiers=[
