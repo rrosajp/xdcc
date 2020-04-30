@@ -1,5 +1,8 @@
 #+TITLE: A simple XDCC downloader written in python3
 
+[[https://pypi.org/project/xdcc/][https://img.shields.io/badge/Code%20Style-Black-black]]
+[[https://www.pylint.org/][https://img.shields.io/badge/Linter-pylint-green]]
+
 * Description
   *xdcc* is a simple, one file, *[[https://en.wikipedia.org/wiki/XDCC][XDCC]]* downloader written in python, so it should works out of the box on every system that
   has python3 installed.
