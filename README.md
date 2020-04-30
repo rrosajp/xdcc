@@ -1,16 +1,17 @@
 
 # Table of Contents
 
-1.  [Description](#org0a55360)
-2.  [How it works](#orge021f17)
-3.  [How to use](#org5a7106c)
-    1.  [Some examples](#orgbb080c4)
-4.  [Notes](#org14d21a2)
-5.  [License](#orge37ffe5)
+1.  [Description](#orga06f92d)
+2.  [Install](#orgad7aa39)
+3.  [How it works](#orgd7c598f)
+4.  [How to use](#org253390f)
+    1.  [Some examples](#org7b9f1d0)
+5.  [Notes](#org379c937)
+6.  [License](#orgbb9e025)
 
 
 
-<a id="org0a55360"></a>
+<a id="orga06f92d"></a>
 
 # Description
 
@@ -18,7 +19,22 @@
 has python3 installed.
 
 
-<a id="orge021f17"></a>
+<a id="orgad7aa39"></a>
+
+# Install
+
+This software is available as a [PyPi](https://pypi.org) package. The installation is pretty simple, just type
+
+    pip install xdcc
+
+for a system install or 
+
+    pip install --user xdcc
+
+to install in the user's **HOME** directory.
+
+
+<a id="orgd7c598f"></a>
 
 # How it works
 
@@ -27,7 +43,7 @@ chosen channel(if some channel are specified on command-line) and sends a **ctcp
 the desired file. If the last part goes well then we start to receive the file via **DCC**.
 
 
-<a id="org5a7106c"></a>
+<a id="org253390f"></a>
 
 # How to use
 
@@ -37,7 +53,7 @@ If **server** and **port number** options are not specified, the default server 
 and 6670, respectively. If no channel is specified then the program don't join any channel at all.
 
 
-<a id="orgbb080c4"></a>
+<a id="org7b9f1d0"></a>
 
 ## Some examples
 
@@ -77,7 +93,7 @@ For more options just type `xdcc --help` in your shell:
       --verbose, -v         Enable verbose mode.
 
 
-<a id="org14d21a2"></a>
+<a id="org379c937"></a>
 
 # Notes
 
@@ -88,7 +104,7 @@ i have used for testing. If you come across some bot that handles DCC differentl
 or a pull request. 
 
 
-<a id="orge37ffe5"></a>
+<a id="orgbb9e025"></a>
 
 # License
 
