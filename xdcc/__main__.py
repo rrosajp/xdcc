@@ -1,4 +1,3 @@
-#! /usr/bin/env python3
 """A command line tool for downloading files from XDCC bots.
 
 General Usage:
@@ -274,8 +273,8 @@ def main():
         "--port",
         "-p",
         type=int,
-        help="The port number of the server. The default is 6667.",
-        default=6667,
+        help="The port number of the server. The default is 6670.",
+        default=6670,
     )
     parser.add_argument(
         "--stdout",

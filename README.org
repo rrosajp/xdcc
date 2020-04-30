@@ -1,7 +1,7 @@
-#+TITLE: A simple XDCC downloader written in python3.
+#+TITLE: A simple XDCC downloader written in python3
 
 * Description
-  *xdcc* is a simple, one file, *XDCC* downloader written in python, so it should works out of the box on every system that
+  *xdcc* is a simple, one file, *[[https://en.wikipedia.org/wiki/XDCC][XDCC]]* downloader written in python, so it should works out of the box on every system that
   has python3 installed.
 * How it works
   This program uses a small IRC client library, [[https://github.com/jaraco/irc]], to connect to the specified server, join the
@@ -14,7 +14,7 @@
   #+END_SRC
   
 If *server* and *port number* options are not specified, the default server and port are irc.rizon.net
-and 6667, respectively. If no channel is specified then the program don't join any channel at all.
+and 6670, respectively. If no channel is specified then the program don't join any channel at all.
   
 ** Some examples
    
@@ -49,12 +49,17 @@ optional arguments:
                         The server to connect. The default is irc.rizon.net.
   --channel CHANNEL, -c CHANNEL
                         The channel to join. The default is to not join in any server.
-  --port PORT, -p PORT  The port number of the server. The default is 6667.
+  --port PORT, -p PORT  The port number of the server. The default is 6670.
   --stdout, -t          When used with the 'list' action, print the contents of the list file to the stdout.
   --nickname NICKNAME, -n NICKNAME
                         Nickname to be used in the server. If this option is not provided, a random permutation of 'anonymous' will
                         be used.
   --verbose, -v         Enable verbose mode.
 #+END_SRC
+* Notes
++ Currently connections using *SSL/TLS* are not supported, so the secure ports will not work.
++ This software assume that the bot is using turbo DCC by default. This was the case with the bots that 
+i have used for testing. If you come across some bot that handles DCC differently, let me know by open a issue
+or a pull request. 
 * License  
-[[file:LICENSE]]
+#+INCLUDE: "LICENSE" src text
