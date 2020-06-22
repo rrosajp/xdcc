@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="xdcc",
-    version="0.0.1",
+    version="0.0.2",
     author="Thiago T. P. Silva",
     author_email="thiagoteodoro501@gmail.com",
     description="A simple XDCC downloader written in python3",

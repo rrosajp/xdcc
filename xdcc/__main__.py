@@ -30,6 +30,9 @@ import logging
 
 import irc.client
 
+# Change the encoding to latin-1, since this will decode everything.
+# For more information, consult the section Decoding Input in Jaraco Irc's documentation.
+irc.client.ServerConnection.buffer_class.encoding = "latin-1"
 
 def get_console_logger(name):
     """Return a logger that prints to the console.
