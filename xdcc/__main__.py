@@ -84,8 +84,7 @@ def genpacks(packstr):
             s = r[0]
             e = r[0]
         # raise error here
-        for k in range(s, e + 1):
-            yield k
+        yield from range(s, e + 1)
 
 
 class XDCC(irc.client.SimpleIRCClient):
